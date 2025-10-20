@@ -22,10 +22,11 @@ interface AddTaskModalProps {
   isOpen: boolean
   onClose: () => void
   sectionId: string
+  sectionColor?: string
   onCreate?: (payload: Partial<Task>) => Promise<void> | void
 }
 
-export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskModalProps) {
+export function AddTaskModal({ isOpen, onClose, sectionId, sectionColor = "#3b82f6", onCreate }: AddTaskModalProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [priority, setPriority] = useState<Task["priority"]>("medium")
@@ -107,7 +108,17 @@ export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskMo
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="title">Título *</Label>
-            <Input id="title" placeholder="Nombre de la tarea" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
+            <Input 
+              id="title" 
+              placeholder="Nombre de la tarea" 
+              value={title} 
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+              style={{ 
+                borderColor: title ? sectionColor : undefined,
+                outline: 'none'
+              }}
+              className="focus-visible:ring-offset-0"
+            />
           </div>
 
           <div className="space-y-2">
@@ -190,7 +201,12 @@ export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskMo
           <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting}
+            style={{ backgroundColor: sectionColor, borderColor: sectionColor }}
+            className="text-white hover:opacity-90"
+          >
             {isSubmitting ? "Creando..." : "Crear tarea"}
           </Button>
         </DialogFooter>

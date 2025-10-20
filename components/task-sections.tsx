@@ -49,6 +49,7 @@ export function TaskSections() {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
   const [isAddSectionModalOpen, setIsAddSectionModalOpen] = useState(false)
   const [selectedSection, setSelectedSection] = useState<string>("")
+  const [selectedSectionColor, setSelectedSectionColor] = useState<string>("")
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false)
   const [taskBeingEdited, setTaskBeingEdited] = useState<Task | null>(null)
 
@@ -67,7 +68,10 @@ export function TaskSections() {
   }
 
   const handleAddTask = (sectionId: string) => {
+    const section = sections.find(s => s.id === sectionId)
+    const sectionColor = tailwindToHex[section?.color || ""] || "#3b82f6"
     setSelectedSection(sectionId)
+    setSelectedSectionColor(sectionColor)
     setIsAddTaskModalOpen(true)
   }
 
@@ -136,7 +140,13 @@ export function TaskSections() {
             <div className="border-b bg-muted/30 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Button variant="ghost" size="icon" className="size-8" onClick={() => toggleSection(section.id)}>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="size-8" 
+                    onClick={() => toggleSection(section.id)}
+                    style={{ color: sectionColor }}
+                  >
                     {isExpanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
                   </Button>
 
@@ -179,6 +189,11 @@ export function TaskSections() {
                     variant={currentFilter === "all" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "all")}
+                    style={
+                      currentFilter === "all"
+                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
+                        : { borderColor: sectionColor, color: sectionColor }
+                    }
                   >
                     Todas <span className="ml-1.5 text-xs opacity-70">({counts.all})</span>
                   </Button>
@@ -186,6 +201,11 @@ export function TaskSections() {
                     variant={currentFilter === "pending" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "pending")}
+                    style={
+                      currentFilter === "pending"
+                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
+                        : { borderColor: sectionColor, color: sectionColor }
+                    }
                   >
                     Pendientes <span className="ml-1.5 text-xs opacity-70">({counts.pending})</span>
                   </Button>
@@ -193,6 +213,11 @@ export function TaskSections() {
                     variant={currentFilter === "in-progress" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "in-progress")}
+                    style={
+                      currentFilter === "in-progress"
+                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
+                        : { borderColor: sectionColor, color: sectionColor }
+                    }
                   >
                     En Progreso <span className="ml-1.5 text-xs opacity-70">({counts["in-progress"]})</span>
                   </Button>
@@ -200,6 +225,11 @@ export function TaskSections() {
                     variant={currentFilter === "completed" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "completed")}
+                    style={
+                      currentFilter === "completed"
+                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
+                        : { borderColor: sectionColor, color: sectionColor }
+                    }
                   >
                     Completadas <span className="ml-1.5 text-xs opacity-70">({counts.completed})</span>
                   </Button>
@@ -242,6 +272,7 @@ export function TaskSections() {
         isOpen={isAddTaskModalOpen}
         onClose={() => setIsAddTaskModalOpen(false)}
         sectionId={selectedSection}
+        sectionColor={selectedSectionColor}
         onCreate={async (payload) => {
           const { error } = await createTask({ ...(payload as any), section_id: selectedSection })
           if (error) alert("Error al crear tarea: " + error.message)
