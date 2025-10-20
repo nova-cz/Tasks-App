@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Calendar, MoreVertical, Flag } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Task } from "@/types/database"
 
 interface TaskItemProps {
@@ -38,6 +39,18 @@ export function TaskItem({ task, onToggleStatus, onDelete, onEdit }: TaskItemPro
       const newStatus = task.status === "completed" ? "pending" : "completed"
       onToggleStatus(task.id, newStatus)
     }
+  }
+
+  // Función helper para formatear la fecha correctamente
+  const formatDate = (dateString: string) => {
+    // Parsear la fecha como fecha local (no UTC)
+    const [year, month, day] = dateString.split('-').map(Number)
+    const localDate = new Date(year, month - 1, day)
+    return localDate.toLocaleDateString("es-ES", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
   }
 
   return (
@@ -80,7 +93,19 @@ export function TaskItem({ task, onToggleStatus, onDelete, onEdit }: TaskItemPro
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className={statusColors[task.status]}>{statusLabels[task.status]}</Badge>
+            <Select 
+              value={task.status} 
+              onValueChange={(newStatus: string) => onToggleStatus?.(task.id, newStatus as Task["status"])}
+            >
+              <SelectTrigger className="h-7 w-auto border-0 bg-transparent px-2 text-xs font-medium hover:bg-muted">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pendiente</SelectItem>
+                <SelectItem value="in-progress">En Progreso</SelectItem>
+                <SelectItem value="completed">Completada</SelectItem>
+              </SelectContent>
+            </Select>
 
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Flag className={`size-3 ${priorityColors[task.priority]}`} />
@@ -92,7 +117,7 @@ export function TaskItem({ task, onToggleStatus, onDelete, onEdit }: TaskItemPro
             {task.date && (
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Calendar className="size-3" />
-                <span>{new Date(task.date).toLocaleDateString("es-ES")}</span>
+                <span>{formatDate(task.date)}</span>
               </div>
             )}
 

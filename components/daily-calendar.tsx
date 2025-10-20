@@ -5,39 +5,43 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
+import { useSupabaseUser } from "@/hooks/useSupabaseUser"
+import { useTasks } from "@/hooks/useTasks"
+import { useSections } from "@/hooks/useSections"
+import type { Task } from "@/types/database"
 
-interface Task {
-  id: string
-  title: string
-  date: string
-  time?: string
-  section: string
-  priority: string
-}
-
-interface DailyCalendarProps {
-  tasks?: Task[]
-}
-
-export function DailyCalendar({ tasks = [] }: DailyCalendarProps) {
-  const [selectedDate, setSelectedDate] = useState(new Date())
+export function DailyCalendar() {
+  const { user } = useSupabaseUser()
+  const { tasks, loading: tasksLoading } = useTasks(user?.id)
+  const { sections } = useSections(user?.id)
+  
+  // Inicializar con fecha normalizada a medianoche
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return today
+  })
 
   const hours = Array.from({ length: 24 }, (_, i) => i)
 
   const goToPreviousDay = () => {
     const newDate = new Date(selectedDate)
     newDate.setDate(newDate.getDate() - 1)
+    newDate.setHours(0, 0, 0, 0) // Normalizar a medianoche
     setSelectedDate(newDate)
   }
 
   const goToNextDay = () => {
     const newDate = new Date(selectedDate)
     newDate.setDate(newDate.getDate() + 1)
+    newDate.setHours(0, 0, 0, 0) // Normalizar a medianoche
     setSelectedDate(newDate)
   }
 
   const goToToday = () => {
-    setSelectedDate(new Date())
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Normalizar a medianoche
+    setSelectedDate(today)
   }
 
   const dateString = selectedDate.toLocaleDateString("es-ES", {
@@ -47,9 +51,16 @@ export function DailyCalendar({ tasks = [] }: DailyCalendarProps) {
     day: "numeric",
   })
 
-  const isToday = selectedDate.toDateString() === new Date().toDateString()
+  // Comparar fechas normalizadas
+  const isToday = (() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return selectedDate.getTime() === today.getTime()
+  })()
 
-  const selectedDateString = selectedDate.toISOString().split("T")[0]
+  // Obtener la fecha local en formato YYYY-MM-DD
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  const selectedDateString = `${selectedDate.getFullYear()}-${pad(selectedDate.getMonth() + 1)}-${pad(selectedDate.getDate())}`
   const tasksForDay = tasks.filter((task) => task.date === selectedDateString)
 
   const getTasksForHour = (hour: number) => {
@@ -60,14 +71,18 @@ export function DailyCalendar({ tasks = [] }: DailyCalendarProps) {
     })
   }
 
-  // Colores por sección
-  const getSectionColor = (section: string) => {
-    const colors: Record<string, string> = {
-      Universidad: "bg-blue-500",
-      Trabajo: "bg-purple-500",
-      Personal: "bg-green-500",
-    }
-    return colors[section] || "bg-gray-500"
+  // Obtener color de sección por ID
+  const getSectionColor = (sectionId: string | null) => {
+    if (!sectionId) return "gray"
+    const section = sections.find((s) => s.id === sectionId)
+    return section?.color || "gray"
+  }
+
+  // Obtener nombre de sección por ID
+  const getSectionName = (sectionId: string | null) => {
+    if (!sectionId) return "Sin sección"
+    const section = sections.find((s) => s.id === sectionId)
+    return section?.name || "Sin sección"
   }
 
   return (
@@ -80,7 +95,7 @@ export function DailyCalendar({ tasks = [] }: DailyCalendarProps) {
             <Button variant="ghost" size="icon" className="size-8" onClick={goToPreviousDay} aria-label="Día anterior">
               <ChevronLeft className="size-4" />
             </Button>
-            {isToday && (
+            {!isToday && (
               <Button variant="outline" size="sm" className="h-8 text-xs bg-transparent" onClick={goToToday}>
                 Hoy
               </Button>
@@ -108,12 +123,16 @@ export function DailyCalendar({ tasks = [] }: DailyCalendarProps) {
 
                 <div className="flex-1 space-y-1 p-2">
                   {hourTasks.map((task) => (
-                    <div key={task.id} className={`rounded-md ${getSectionColor(task.section)} p-2 text-sm text-white`}>
+                    <div
+                      key={task.id}
+                      className={`rounded-md p-2 text-sm text-white`}
+                      style={{ backgroundColor: getSectionColor(task.section_id) }}
+                    >
                       <div className="font-medium">{task.title}</div>
                       <div className="mt-0.5 flex items-center gap-2 text-xs opacity-90">
                         <span>{task.time}</span>
                         <span>•</span>
-                        <span>{task.section}</span>
+                        <span>{getSectionName(task.section_id)}</span>
                       </div>
                     </div>
                   ))}

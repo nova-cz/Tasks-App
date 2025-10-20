@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -31,9 +31,21 @@ export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskMo
   const [priority, setPriority] = useState<Task["priority"]>("medium")
   const [status, setStatus] = useState<Task["status"]>("pending")
   const [date, setDate] = useState<string>("")
+  const [time, setTime] = useState<string>("")
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Establecer la fecha de hoy por defecto cuando se abre el modal
+  useEffect(() => {
+    if (isOpen && !date) {
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = String(today.getMonth() + 1).padStart(2, '0')
+      const day = String(today.getDate()).padStart(2, '0')
+      setDate(`${year}-${month}-${day}`)
+    }
+  }, [isOpen])
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -66,6 +78,7 @@ export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskMo
         priority,
         status,
         date: date || null,
+        time: time || null,
         tags,
         section_id: sectionId,
       } as Partial<Task>)
@@ -75,6 +88,7 @@ export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskMo
       setPriority("medium")
       setStatus("pending")
       setDate("")
+      setTime("")
       setTags([])
       onClose()
     } finally {
@@ -131,9 +145,16 @@ export function AddTaskModal({ isOpen, onClose, sectionId, onCreate }: AddTaskMo
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="date">Fecha</Label>
-            <Input id="date" type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="date">Fecha</Label>
+              <Input id="date" type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="time">Hora</Label>
+              <Input id="time" type="time" value={time} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTime(e.target.value)} />
+            </div>
           </div>
 
           <div className="space-y-2">

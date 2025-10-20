@@ -31,6 +31,7 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
     const [priority, setPriority] = useState<Task["priority"]>("medium")
     const [status, setStatus] = useState<Task["status"]>("pending")
     const [date, setDate] = useState<string>("")
+    const [time, setTime] = useState<string>("")
     const [tags, setTags] = useState<string[]>([])
     const [tagInput, setTagInput] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -42,6 +43,7 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
             setPriority(task.priority)
             setStatus(task.status)
             setDate(task.date || "")
+            setTime(task.time || "")
             setTags(task.tags || [])
             setTagInput("")
         }
@@ -79,6 +81,7 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
                 priority,
                 status,
                 date: date || null,
+                time: time || null,
                 tags,
             } as Partial<Task>)
             onClose()
@@ -136,9 +139,16 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="date">Fecha</Label>
-                        <Input id="date" type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2">
+                            <Label htmlFor="date">Fecha</Label>
+                            <Input id="date" type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="time">Hora</Label>
+                            <Input id="time" type="time" value={time} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTime(e.target.value)} />
+                        </div>
                     </div>
 
                     <div className="space-y-2">

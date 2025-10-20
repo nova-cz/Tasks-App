@@ -14,6 +14,18 @@ import { EditTaskModal } from "@/components/edit-task-modal"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import type { TaskStatus, Task } from "@/types/database"
 
+// Mapa de conversión de clases Tailwind a colores hex
+const tailwindToHex: Record<string, string> = {
+  "bg-blue-500": "#3b82f6",
+  "bg-purple-500": "#a855f7",
+  "bg-green-500": "#22c55e",
+  "bg-orange-500": "#f97316",
+  "bg-pink-500": "#ec4899",
+  "bg-red-500": "#ef4444",
+  "bg-yellow-500": "#eab308",
+  "bg-cyan-500": "#06b6d4",
+}
+
 export function TaskSections() {
   const { user } = useSupabaseUser()
 
@@ -117,6 +129,7 @@ export function TaskSections() {
         const currentFilter = activeFilters[section.id] || "all"
         const counts = getTaskCounts(section.id)
         const filteredTasks = getFilteredTasks(section.id)
+        const sectionColor = tailwindToHex[section.color || ""] || "#3b82f6"
 
         return (
           <Card key={section.id} className="overflow-hidden">
@@ -127,12 +140,22 @@ export function TaskSections() {
                     {isExpanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
                   </Button>
 
-                  <div className={`size-3 rounded-full ${section.color || "bg-blue-500"}`} />
+                  <div className="size-3 rounded-full" style={{ backgroundColor: sectionColor }} />
 
                   <h2 className="text-lg font-semibold">{section.name}</h2>
 
-                  <Button variant="ghost" size="icon" className="size-7" onClick={() => handleAddTask(section.id)}>
-                    <Plus className="size-4" />
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleAddTask(section.id)}
+                    style={{ 
+                      borderColor: sectionColor,
+                      color: sectionColor
+                    }}
+                    className="hover:opacity-80"
+                  >
+                    <Plus className="size-4 mr-1.5" />
+                    Agregar Tarea
                   </Button>
                 </div>
 
