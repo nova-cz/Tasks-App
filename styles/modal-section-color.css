@@ -1,0 +1,33 @@
+/* Aplica el color de la sección a todos los inputs, selects, textarea y botones dentro de un modal con la clase .section-modal-color */
+.section-modal-color input,
+.section-modal-color textarea,
+.section-modal-color select,
+.section-modal-color .shadcn-select-trigger,
+.section-modal-color .shadcn-date-picker,
+.section-modal-color button {
+  border-color: var(--section-color, #3b82f6) !important;
+  box-shadow: none;
+}
+
+.section-modal-color input:focus,
+.section-modal-color textarea:focus,
+.section-modal-color select:focus,
+.section-modal-color .shadcn-select-trigger:focus,
+.section-modal-color .shadcn-date-picker:focus {
+  border-color: var(--section-color, #3b82f6) !important;
+  box-shadow: 0 0 0 2px var(--section-color, #3b82f6)33 !important;
+}
+
+.section-modal-color button.primary,
+.section-modal-color button[type="submit"] {
+  background: var(--section-color, #3b82f6) !important;
+  border-color: var(--section-color, #3b82f6) !important;
+  color: #fff !important;
+}
+
+/* Date picker: día seleccionado */
+.section-modal-color .react-datepicker__day--selected,
+.section-modal-color .react-datepicker__day--keyboard-selected {
+  background: var(--section-color, #3b82f6) !important;
+  border-radius: 0.375rem;
+}

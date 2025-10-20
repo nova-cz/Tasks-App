@@ -99,7 +99,10 @@ export function AddTaskModal({ isOpen, onClose, sectionId, sectionColor = "#3b82
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent
+        className="max-w-2xl section-modal-color"
+        style={{ '--section-color': sectionColor } as React.CSSProperties}
+      >
         <DialogHeader>
           <DialogTitle>Crear nueva tarea</DialogTitle>
           <DialogDescription>Completa los detalles de tu nueva tarea</DialogDescription>

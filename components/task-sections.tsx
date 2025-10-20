@@ -292,6 +292,11 @@ export function TaskSections() {
         isOpen={isEditTaskModalOpen}
         onClose={() => setIsEditTaskModalOpen(false)}
         task={taskBeingEdited}
+        sectionColor={(() => {
+          if (!taskBeingEdited) return "#3b82f6"
+          const section = sections.find(s => s.id === taskBeingEdited.section_id)
+          return tailwindToHex[section?.color || ""] || section?.color || "#3b82f6"
+        })()}
         onUpdate={async (id, patch) => {
           const { error } = await updateTask(id, patch)
           if (error) alert("Error al actualizar tarea: " + error.message)

@@ -18,14 +18,16 @@ import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
 import type { Task } from "@/types/database"
 
+
 interface EditTaskModalProps {
     isOpen: boolean
     onClose: () => void
     task: Task | null
+    sectionColor?: string
     onUpdate?: (id: string, payload: Partial<Task>) => Promise<void> | void
 }
 
-export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModalProps) {
+export function EditTaskModal({ isOpen, onClose, task, sectionColor = "#3b82f6", onUpdate }: EditTaskModalProps) {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [priority, setPriority] = useState<Task["priority"]>("medium")
@@ -92,7 +94,10 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent
+                className="max-w-2xl section-modal-color"
+                style={{ '--section-color': sectionColor } as React.CSSProperties}
+            >
                 <DialogHeader>
                     <DialogTitle>Editar tarea</DialogTitle>
                     <DialogDescription>Modifica los campos de tu tarea</DialogDescription>
@@ -101,21 +106,21 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
                 <div className="space-y-4 py-4">
                     <div className="space-y-2">
                         <Label htmlFor="title">Título *</Label>
-                        <Input id="title" placeholder="Nombre de la tarea" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
+                        <Input id="title" placeholder="Nombre de la tarea" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} className="border-2" style={{ borderColor: sectionColor }} />
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="description">Descripción</Label>
-                        <Textarea id="description" placeholder="Describe los detalles de la tarea" rows={3} value={description} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} />
+                        <Textarea id="description" placeholder="Describe los detalles de la tarea" rows={3} value={description} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} className="border-2" style={{ borderColor: sectionColor }} />
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="priority">Prioridad</Label>
-                            <Select value={priority} onValueChange={(v: string) => setPriority(v as Task["priority"])}>
-                                <SelectTrigger id="priority">
-                                    <SelectValue />
-                                </SelectTrigger>
+                            <Select value={priority} onValueChange={(v: string) => setPriority(v as Task["priority"])}> 
+                                <SelectTrigger id="priority" className="border-2" style={{ borderColor: sectionColor }}> 
+                                    <SelectValue /> 
+                                </SelectTrigger> 
                                 <SelectContent>
                                     <SelectItem value="low">Baja</SelectItem>
                                     <SelectItem value="medium">Media</SelectItem>
@@ -126,10 +131,10 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
 
                         <div className="space-y-2">
                             <Label htmlFor="status">Estado</Label>
-                            <Select value={status} onValueChange={(v: string) => setStatus(v as Task["status"])}>
-                                <SelectTrigger id="status">
-                                    <SelectValue />
-                                </SelectTrigger>
+                            <Select value={status} onValueChange={(v: string) => setStatus(v as Task["status"])}> 
+                                <SelectTrigger id="status" className="border-2" style={{ borderColor: sectionColor }}> 
+                                    <SelectValue /> 
+                                </SelectTrigger> 
                                 <SelectContent>
                                     <SelectItem value="pending">Pendiente</SelectItem>
                                     <SelectItem value="in-progress">En Progreso</SelectItem>
@@ -142,12 +147,12 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="date">Fecha</Label>
-                            <Input id="date" type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
+                            <Input id="date" type="date" value={date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} className="border-2" style={{ borderColor: sectionColor }} />
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="time">Hora</Label>
-                            <Input id="time" type="time" value={time} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTime(e.target.value)} />
+                            <Input id="time" type="time" value={time} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTime(e.target.value)} className="border-2" style={{ borderColor: sectionColor }} />
                         </div>
                     </div>
 
@@ -160,6 +165,8 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
                                 value={tagInput}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
+                                className="border-2"
+                                style={{ borderColor: sectionColor }}
                             />
                             <Button type="button" variant="secondary" onClick={addTag}>
                                 Agregar
@@ -184,7 +191,7 @@ export function EditTaskModal({ isOpen, onClose, task, onUpdate }: EditTaskModal
                     <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleSubmit} disabled={isSubmitting}>
+                    <Button onClick={handleSubmit} disabled={isSubmitting} style={{ backgroundColor: sectionColor, borderColor: sectionColor }} className="text-white hover:opacity-90">
                         {isSubmitting ? "Guardando..." : "Guardar cambios"}
                     </Button>
                 </DialogFooter>
