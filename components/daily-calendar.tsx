@@ -4,11 +4,24 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+
 import { useState } from "react"
 import { useSupabaseUser } from "@/hooks/useSupabaseUser"
 import { useTasks } from "@/hooks/useTasks"
 import { useSections } from "@/hooks/useSections"
 import type { Task } from "@/types/database"
+
+// Mapa de conversión de clases Tailwind a colores hex
+const tailwindToHex: Record<string, string> = {
+  "bg-blue-500": "#3b82f6",
+  "bg-purple-500": "#a855f7",
+  "bg-green-500": "#22c55e",
+  "bg-orange-500": "#f97316",
+  "bg-pink-500": "#ec4899",
+  "bg-red-500": "#ef4444",
+  "bg-yellow-500": "#eab308",
+  "bg-cyan-500": "#06b6d4",
+}
 
 export function DailyCalendar() {
   const { user } = useSupabaseUser()
@@ -71,11 +84,12 @@ export function DailyCalendar() {
     })
   }
 
-  // Obtener color de sección por ID
+  // Obtener color de sección por ID (hex)
   const getSectionColor = (sectionId: string | null) => {
-    if (!sectionId) return "gray"
+    if (!sectionId) return "#6b7280" // gris neutro
     const section = sections.find((s) => s.id === sectionId)
-    return section?.color || "gray"
+    if (!section) return "#6b7280"
+    return tailwindToHex[section.color || ""] || section.color || "#6b7280"
   }
 
   // Obtener nombre de sección por ID
