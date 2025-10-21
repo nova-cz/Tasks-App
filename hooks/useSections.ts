@@ -34,6 +34,38 @@ export function useSections(userId?: string) {
     fetchSections()
   }, [fetchSections])
 
+  // Realtime para secciones
+  useEffect(() => {
+    if (!userId) return
+    const channel = supabase
+      .channel('sections-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'sections', filter: `user_id=eq.${userId}` },
+        (payload) => {
+          const { eventType, new: newRow, old: oldRow } = payload as any
+          setSections((prev) => {
+            if (eventType === 'INSERT' && newRow) {
+              const exists = prev.some((s) => s.id === newRow.id)
+              return exists ? prev : [...prev, newRow]
+            }
+            if (eventType === 'UPDATE' && newRow) {
+              return prev.map((s) => (s.id === newRow.id ? newRow : s))
+            }
+            if (eventType === 'DELETE' && oldRow) {
+              return prev.filter((s) => s.id !== oldRow.id)
+            }
+            return prev
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [userId])
+
   const createSection = async (name: string, color = "bg-blue-500") => {
     if (!userId) return { error: new Error("No user") }
     const { data, error } = await supabase

@@ -11,6 +11,7 @@ interface TasksContextType {
   createTask: ReturnType<typeof useTasks>["createTask"]
   updateTask: ReturnType<typeof useTasks>["updateTask"]
   deleteTask: ReturnType<typeof useTasks>["deleteTask"]
+  deleteTasksBySection: ReturnType<typeof useTasks>["deleteTasksBySection"]
 }
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined)

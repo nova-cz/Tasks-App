@@ -60,6 +60,28 @@ export function useTasks(userId?: string) {
         return { error }
     }
 
+    // 🧹 eliminar tareas por sección (bulk)
+    const deleteTasksBySection = async (sectionId: string) => {
+        if (!userId) return { error: new Error("No user") }
+        console.log('🧹 [deleteTasksBySection] Eliminando tareas de la sección:', sectionId)
+        const { error } = await supabase
+            .from("tasks")
+            .delete()
+            .eq("user_id", userId)
+            .eq("section_id", sectionId)
+        if (!error) {
+            setTasks((prev) => {
+                const before = prev.length
+                const updated = prev.filter((t) => t.section_id !== sectionId)
+                console.log('📊 [deleteTasksBySection] Tareas antes:', before, 'después:', updated.length)
+                return updated
+            })
+        } else {
+            console.error('❌ [deleteTasksBySection] Error al eliminar:', error)
+        }
+        return { error }
+    }
+
     // ➕ crear tarea
     const createTask = async (
         input: Omit<Task, "id" | "created_at" | "user_id"> & { section_id?: string | null }
@@ -152,5 +174,5 @@ export function useTasks(userId?: string) {
         }
     }, [userId])
 
-    return { tasks, loading, createTask, updateTask, deleteTask }
+    return { tasks, loading, createTask, updateTask, deleteTask, deleteTasksBySection }
 }

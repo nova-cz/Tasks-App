@@ -6,9 +6,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 import { useState } from "react"
-import { useSections } from "@/hooks/useSections"
 import { useTasksContext } from "@/contexts/TasksContext"
-import { useSupabaseUser } from "@/hooks/useSupabaseUser"
+import { useSectionsContext } from "@/contexts/SectionsContext"
 import type { Task } from "@/types/database"
 
 // Mapa de conversión de clases Tailwind a colores hex
@@ -24,9 +23,8 @@ const tailwindToHex: Record<string, string> = {
 }
 
 export function DailyCalendar() {
-  const { user } = useSupabaseUser()
   const { tasks, loading: tasksLoading, deleteTask } = useTasksContext()
-  const { sections } = useSections(user?.id)
+  const { sections } = useSectionsContext()
   
   console.log('📅 DailyCalendar - Total tareas:', tasks.length, tasks)
   

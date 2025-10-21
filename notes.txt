@@ -1,0 +1,5 @@
+pendientes
+
+-areglar el que las tareas no se actulicen en el claendario 
+-los tonos de colores en las tarejtas de las tareas creadas
+-añadir boton d elogin en lugar del perfil

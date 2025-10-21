@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useSupabaseUser } from "@/hooks/useSupabaseUser"
-import { useSections } from "@/hooks/useSections"
 import { useTasksContext } from "@/contexts/TasksContext"
+import { useSectionsContext } from "@/contexts/SectionsContext"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Plus, ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
@@ -27,14 +26,12 @@ const tailwindToHex: Record<string, string> = {
 }
 
 export function TaskSections() {
-  const { user } = useSupabaseUser()
-
   const {
     sections,
     loading: sectionsLoading,
     createSection,
     deleteSection,
-  } = useSections(user?.id)
+  } = useSectionsContext()
 
   const {
     tasks,
@@ -42,6 +39,7 @@ export function TaskSections() {
     updateTask,
     deleteTask,
     createTask,
+    deleteTasksBySection,
   } = useTasksContext()
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
@@ -99,6 +97,14 @@ export function TaskSections() {
   const handleDeleteSection = async (sectionId: string) => {
     if (!confirm("¿Estás seguro de eliminar esta sección? Se eliminarán todas sus tareas.")) return
     
+    // Primero eliminamos las tareas de la sección
+    const { error: tasksError } = await deleteTasksBySection(sectionId)
+    if (tasksError) {
+      alert("Error al eliminar tareas de la sección: " + tasksError.message)
+      return
+    }
+    
+    // Luego eliminamos la sección
     const { error } = await deleteSection(sectionId)
     if (error) {
       alert("Error al eliminar la sección: " + error.message)
