@@ -6,9 +6,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 import { useState } from "react"
-import { useSupabaseUser } from "@/hooks/useSupabaseUser"
-import { useTasks } from "@/hooks/useTasks"
 import { useSections } from "@/hooks/useSections"
+import { useTasksContext } from "@/contexts/TasksContext"
+import { useSupabaseUser } from "@/hooks/useSupabaseUser"
 import type { Task } from "@/types/database"
 
 // Mapa de conversión de clases Tailwind a colores hex
@@ -25,8 +25,10 @@ const tailwindToHex: Record<string, string> = {
 
 export function DailyCalendar() {
   const { user } = useSupabaseUser()
-  const { tasks, loading: tasksLoading } = useTasks(user?.id)
+  const { tasks, loading: tasksLoading, deleteTask } = useTasksContext()
   const { sections } = useSections(user?.id)
+  
+  console.log('📅 DailyCalendar - Total tareas:', tasks.length, tasks)
   
   // Inicializar con fecha normalizada a medianoche
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -74,10 +76,21 @@ export function DailyCalendar() {
   // Obtener la fecha local en formato YYYY-MM-DD
   const pad = (n: number) => n.toString().padStart(2, "0")
   const selectedDateString = `${selectedDate.getFullYear()}-${pad(selectedDate.getMonth() + 1)}-${pad(selectedDate.getDate())}`
-  const tasksForDay = tasks.filter((task) => task.date === selectedDateString)
+  const validSectionIds = new Set(sections.map((s) => s.id))
+  // Mostrar solo tareas que pertenecen a una sección existente
+  const tasksForDay = tasks.filter((task: Task) => {
+    return task.date === selectedDateString && !!task.section_id && validSectionIds.has(task.section_id)
+  })
+  // Contar huérfanas del día (sin sección o con sección inexistente)
+  const orphanTasksToday = tasks.filter((task: Task) => {
+    return task.date === selectedDateString && (!task.section_id || !validSectionIds.has(task.section_id))
+  })
+  
+  console.log('📅 Fecha seleccionada:', selectedDateString)
+  console.log('📅 Tareas del día:', tasksForDay.length, tasksForDay)
 
   const getTasksForHour = (hour: number) => {
-    return tasksForDay.filter((task) => {
+    return tasksForDay.filter((task: Task) => {
       if (!task.time) return false
       const taskHour = Number.parseInt(task.time.split(":")[0])
       return taskHour === hour
@@ -99,6 +112,15 @@ export function DailyCalendar() {
     return section?.name || "Sin sección"
   }
 
+  const handleCleanOrphans = async () => {
+    if (orphanTasksToday.length === 0) return
+    const ok = confirm(
+      `Se eliminarán ${orphanTasksToday.length} tarea(s) sin sección de este día. ¿Deseas continuar?`
+    )
+    if (!ok) return
+  await Promise.all(orphanTasksToday.map((t: Task) => deleteTask(t.id)))
+  }
+
   return (
     <Card className="overflow-hidden">
       {/* Header del calendario */}
@@ -112,6 +134,17 @@ export function DailyCalendar() {
             {!isToday && (
               <Button variant="outline" size="sm" className="h-8 text-xs bg-transparent" onClick={goToToday}>
                 Hoy
+              </Button>
+            )}
+            {orphanTasksToday.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={handleCleanOrphans}
+                title="Eliminar tareas sin sección de este día"
+              >
+                Limpiar huérfanas ({orphanTasksToday.length})
               </Button>
             )}
             <Button variant="ghost" size="icon" className="size-8" onClick={goToNextDay} aria-label="Día siguiente">

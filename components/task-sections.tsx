@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useSupabaseUser } from "@/hooks/useSupabaseUser"
 import { useSections } from "@/hooks/useSections"
-import { useTasks } from "@/hooks/useTasks"
+import { useTasksContext } from "@/contexts/TasksContext"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Plus, ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
@@ -42,7 +42,7 @@ export function TaskSections() {
     updateTask,
     deleteTask,
     createTask,
-  } = useTasks(user?.id)
+  } = useTasksContext()
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
   const [activeFilters, setActiveFilters] = useState<Record<string, "all" | TaskStatus>>({})

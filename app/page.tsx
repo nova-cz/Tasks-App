@@ -1,10 +1,12 @@
 import { TaskHeader } from "@/components/task-header"
 import { TaskSections } from "@/components/task-sections"
 import { DailyCalendar } from "@/components/daily-calendar"
+import { TasksProvider } from "@/contexts/TasksContext"
 
 export default function TasksPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <TasksProvider>
+      <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">
         <TaskHeader />
 
@@ -14,7 +16,8 @@ export default function TasksPage() {
             <DailyCalendar />
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </TasksProvider>
   )
 }
