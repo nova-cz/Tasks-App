@@ -1,0 +1,148 @@
+/* Reusable styles for buttons tinted by section color */
+.section-colored {
+  /* Expect a CSS variable --section-color (hex/rgb/oklch) */
+  --section-color: #3b82f6;
+}
+
+/* Solid button (filled with section color) */
+.section-colored.is-solid {
+  background-color: var(--section-color) !important;
+  border-color: var(--section-color) !important;
+  color: #fff !important;
+  transition: filter .2s ease, background-color .2s ease, color .2s ease;
+}
+.section-colored.is-solid:hover {
+  /* Simplified hover: subtle border and slight brightness change. No pulsing, no heavy shadow. */
+  background: var(--section-color) !important;
+  color: var(--section-hover-outline-text) !important;
+  border: 1px solid var(--section-hover-outline-color) !important;
+  filter: var(--section-hover-solid-filter);
+  box-shadow: none;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, filter .18s ease;
+}
+
+/* Outline button (border + text tinted by section color) */
+.section-colored.is-outline {
+  border-color: var(--section-color) !important;
+  color: var(--section-color) !important;
+  transition: background-color .2s ease, filter .2s ease, color .2s ease;
+}
+.section-colored.is-outline:hover {
+  /* Outline hover: prefer the theme-aware outline color (not the green fill) */
+  background: color-mix(in oklab, var(--section-hover-outline-color) 10%, transparent);
+  color: var(--section-hover-outline-text) !important;
+  border-color: var(--section-hover-outline-color) !important;
+}
+
+/* Compact icon buttons (e.g., chevron toggle) - filled with section color, icon white */
+.section-colored.is-icon {
+  background: var(--section-color) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.section-colored.is-icon svg {
+  color: #fff !important;
+  fill: currentColor !important;
+}
+.section-colored.is-icon:hover {
+  /* subtle brightness change for hover while keeping icon white */
+  filter: var(--section-hover-solid-filter);
+}
+
+/* Neutral icon style for controls that should NOT use the section color
+   Light: white background with dark icon. Dark: dark background with white icon. */
+.neutral-icon {
+  background: #ffffff !important;
+  color: oklch(0.12 0 0) !important; /* near-black */
+  border: 1px solid var(--border) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.neutral-icon svg {
+  color: inherit !important;
+  fill: currentColor !important;
+}
+.dark .neutral-icon {
+  background: oklch(0.12 0 0) !important; /* dark bg */
+  color: #fff !important;
+  border-color: var(--sidebar-border) !important;
+}
+
+/* Hover behavior requested:
+   - Light mode: on hover, neutral icon -> black background, white icon
+   - Dark mode: on hover, neutral icon -> white background, black icon
+*/
+.neutral-icon:hover {
+  background: oklch(0.12 0 0) !important; /* black background */
+  color: #fff !important; /* white icon */
+  transition: background .15s ease, color .15s ease;
+}
+.dark .neutral-icon:hover {
+  background: #ffffff !important; /* white background */
+  color: oklch(0.12 0 0) !important; /* black icon */
+  transition: background .15s ease, color .15s ease;
+}
+
+/* Theme-aware hover customization -------------------------------------------------- */
+:root {
+  /* Light mode defaults */
+  --section-hover-solid-filter: brightness(0.92);
+  --section-hover-outline-color: #0b3d91; /* navy-ish by default in light mode */
+  --section-hover-outline-bg: color-mix(in oklab, var(--section-hover-outline-color) 10%, transparent);
+  --section-hover-outline-text: var(--section-color);
+}
+
+.dark {
+  /* Dark mode: prefer light hover (white-ish) with dark text for contrast */
+  --section-hover-solid-filter: brightness(1.03);
+  --section-hover-outline-color: #ffffff; /* white outline in dark mode */
+  --section-hover-outline-bg: color-mix(in oklab, var(--section-hover-outline-color) 14%, transparent);
+  --section-hover-outline-text: oklch(0.12 0 0); /* near-black text on light hover */
+}
+
+/* Use variables in the components */
+.section-colored.is-solid:hover {
+  filter: var(--section-hover-solid-filter);
+}
+.section-colored.is-outline:hover {
+  background: var(--section-hover-outline-bg);
+  color: var(--section-hover-outline-text) !important;
+}
+
+/* For icon-only controls (small buttons), tweak hover to ensure visible outlines */
+.section-colored.is-icon:hover {
+  filter: var(--section-hover-solid-filter);
+}
+
+/* No pulsing animation — kept styles simple for clean hover */
+
+/* Task checkbox theming --------------------------------------------------------- */
+.task-checkbox {
+  border-width: 2px !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.125rem !important;
+}
+
+.task-checkbox[data-state="checked"] {
+  background-color: var(--section-color) !important;
+  border-color: var(--section-color) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+}
+
+.task-checkbox[data-state="checked"] [data-slot="checkbox-indicator"] svg {
+  color: #fff !important;
+  fill: currentColor !important;
+}
+
+.task-checkbox:not([data-state="checked"]) {
+  border-color: var(--muted-border, rgba(15,23,42,0.06)) !important;
+}
+

@@ -51,6 +51,20 @@ export function EditTaskModal({ isOpen, onClose, task, sectionColor = "#3b82f6",
         }
     }, [task])
 
+    // Hacer disponible el color de la sección globalmente mientras el modal esté abierto
+    useEffect(() => {
+        if (!isOpen) return
+        const root = document.documentElement
+        const prev = root.style.getPropertyValue('--section-color')
+        root.style.setProperty('--section-color', sectionColor)
+        root.classList.add('section-color-active')
+        return () => {
+            if (prev) root.style.setProperty('--section-color', prev)
+            else root.style.removeProperty('--section-color')
+            root.classList.remove('section-color-active')
+        }
+    }, [isOpen, sectionColor])
+
     const addTag = () => {
         if (tagInput.trim() && !tags.includes(tagInput.trim())) {
             setTags([...tags, tagInput.trim()])

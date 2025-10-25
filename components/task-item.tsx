@@ -13,9 +13,10 @@ interface TaskItemProps {
   onToggleStatus?: (taskId: string, newStatus: Task["status"]) => void
   onDelete?: (taskId: string) => void
   onEdit?: (task: Task) => void
+  sectionColor?: string
 }
 
-export function TaskItem({ task, onToggleStatus, onDelete, onEdit }: TaskItemProps) {
+export function TaskItem({ task, onToggleStatus, onDelete, onEdit, sectionColor }: TaskItemProps) {
   const priorityColors = {
     low: "text-muted-foreground",
     medium: "text-chart-3",
@@ -58,8 +59,9 @@ export function TaskItem({ task, onToggleStatus, onDelete, onEdit }: TaskItemPro
       <div className="flex items-start gap-4">
         <Checkbox 
           checked={task.status === "completed"} 
-          className="mt-1"
+          className="mt-1 task-checkbox"
           onCheckedChange={handleToggleComplete}
+          style={sectionColor ? { ['--section-color' as any]: sectionColor } : undefined}
         />
 
         <div className="flex-1 space-y-2">
@@ -67,8 +69,9 @@ export function TaskItem({ task, onToggleStatus, onDelete, onEdit }: TaskItemPro
             <div className="flex-1">
               <h3
                 className={`font-medium leading-relaxed ${
-                  task.status === "completed" ? "text-muted-foreground line-through" : ""
+                  task.status === "completed" ? "line-through" : ""
                 }`}
+                style={task.status === 'completed' && sectionColor ? { color: sectionColor } : undefined}
               >
                 {task.title}
               </h3>

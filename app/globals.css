@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../styles/section-colored.css";
+@import "../styles/modal-section-color.css";
 
 @custom-variant dark (&:is(.dark *));
 

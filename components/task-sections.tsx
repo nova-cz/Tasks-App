@@ -149,9 +149,9 @@ export function TaskSections() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="size-8" 
+                    className="size-8 section-colored is-icon" 
                     onClick={() => toggleSection(section.id)}
-                    style={{ color: sectionColor }}
+                    style={{ ['--section-color' as any]: sectionColor }}
                   >
                     {isExpanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
                   </Button>
@@ -164,11 +164,8 @@ export function TaskSections() {
                     variant="outline" 
                     size="sm" 
                     onClick={() => handleAddTask(section.id)}
-                    style={{ 
-                      borderColor: sectionColor,
-                      color: sectionColor
-                    }}
-                    className="hover:opacity-80"
+                    style={{ ['--section-color' as any]: sectionColor }}
+                    className="section-colored is-outline"
                   >
                     <Plus className="size-4 mr-1.5" />
                     Agregar Tarea
@@ -195,11 +192,8 @@ export function TaskSections() {
                     variant={currentFilter === "all" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "all")}
-                    style={
-                      currentFilter === "all"
-                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
-                        : { borderColor: sectionColor, color: sectionColor }
-                    }
+                    style={{ ['--section-color' as any]: sectionColor }}
+                    className={currentFilter === "all" ? "section-colored is-solid" : "section-colored is-outline"}
                   >
                     Todas <span className="ml-1.5 text-xs opacity-70">({counts.all})</span>
                   </Button>
@@ -207,11 +201,8 @@ export function TaskSections() {
                     variant={currentFilter === "pending" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "pending")}
-                    style={
-                      currentFilter === "pending"
-                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
-                        : { borderColor: sectionColor, color: sectionColor }
-                    }
+                    style={{ ['--section-color' as any]: sectionColor }}
+                    className={currentFilter === "pending" ? "section-colored is-solid" : "section-colored is-outline"}
                   >
                     Pendientes <span className="ml-1.5 text-xs opacity-70">({counts.pending})</span>
                   </Button>
@@ -219,11 +210,8 @@ export function TaskSections() {
                     variant={currentFilter === "in-progress" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "in-progress")}
-                    style={
-                      currentFilter === "in-progress"
-                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
-                        : { borderColor: sectionColor, color: sectionColor }
-                    }
+                    style={{ ['--section-color' as any]: sectionColor }}
+                    className={currentFilter === "in-progress" ? "section-colored is-solid" : "section-colored is-outline"}
                   >
                     En Progreso <span className="ml-1.5 text-xs opacity-70">({counts["in-progress"]})</span>
                   </Button>
@@ -231,11 +219,8 @@ export function TaskSections() {
                     variant={currentFilter === "completed" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setFilter(section.id, "completed")}
-                    style={
-                      currentFilter === "completed"
-                        ? { backgroundColor: sectionColor, borderColor: sectionColor }
-                        : { borderColor: sectionColor, color: sectionColor }
-                    }
+                    style={{ ['--section-color' as any]: sectionColor }}
+                    className={currentFilter === "completed" ? "section-colored is-solid" : "section-colored is-outline"}
                   >
                     Completadas <span className="ml-1.5 text-xs opacity-70">({counts.completed})</span>
                   </Button>
@@ -255,6 +240,7 @@ export function TaskSections() {
                       onToggleStatus={handleToggleTaskStatus}
                       onDelete={handleDeleteTask}
                       onEdit={handleOpenEditTask}
+                      sectionColor={sectionColor}
                     />
                   ))
                 ) : (
@@ -268,8 +254,9 @@ export function TaskSections() {
 
       <Button
         variant="outline"
-        className="w-full border-dashed bg-transparent"
+        className="w-full !border !border-black bg-black text-white hover:!bg-black hover:shadow-lg hover:scale-105 transform transition duration-150 ease-out dark:!bg-white dark:!text-black dark:hover:!bg-white dark:!border-white"
         onClick={() => setIsAddSectionModalOpen(true)}
+        style={{ ['--tw-shadow-color' as any]: 'rgba(0,0,0,0.12)' }}
       >
         <Plus className="mr-2 size-4" />
         Agregar nueva sección

@@ -25,6 +25,29 @@
   color: #fff !important;
 }
 
+/* Select (shadcn): item seleccionado y foco usan el color de la sección */
+/* Dentro del modal (si el portal cae dentro del modal) */
+.section-modal-color [data-slot="select-item"][data-state="checked"],
+.section-modal-color [data-slot="select-item"]:focus {
+  background: var(--section-color, #3b82f6) !important;
+  color: #fff !important;
+}
+.section-modal-color [data-slot="select-item"][data-state="checked"] svg,
+.section-modal-color [data-slot="select-item"]:focus svg {
+  color: #fff !important;
+}
+
+/* Fallback global (cuando el Select se renderiza en un Portal fuera del modal) */
+:root.section-color-active [data-slot="select-item"][data-state="checked"],
+:root.section-color-active [data-slot="select-item"]:focus {
+  background: var(--section-color, #3b82f6) !important;
+  color: #fff !important;
+}
+:root.section-color-active [data-slot="select-item"][data-state="checked"] svg,
+:root.section-color-active [data-slot="select-item"]:focus svg {
+  color: #fff !important;
+}
+
 /* Date picker: día seleccionado */
 .section-modal-color .react-datepicker__day--selected,
 .section-modal-color .react-datepicker__day--keyboard-selected {

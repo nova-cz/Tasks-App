@@ -21,6 +21,7 @@ export function TaskHeader() {
         <Button
           variant="ghost"
           size="icon"
+          className="size-8 neutral-icon"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           aria-label="Cambiar tema"
         >
