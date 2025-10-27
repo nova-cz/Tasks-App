@@ -56,7 +56,7 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="ghost" size="sm" className="mb-4">
+            <Button variant="ghost" size="sm" className="mb-4 neutral-icon">
               <ArrowLeft className="mr-2 size-4" />
               Volver a tareas
             </Button>

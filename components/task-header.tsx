@@ -40,7 +40,7 @@ export function TaskHeader() {
               />
             </div>
           ) : (
-            <Button variant="ghost" size="icon" aria-label="Perfil">
+            <Button variant="ghost" size="icon" aria-label="Perfil" className="size-8 neutral-icon">
               <User className="size-5" />
             </Button>
           )}
